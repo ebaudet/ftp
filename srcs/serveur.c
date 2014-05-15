@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:03 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/14 20:22:49 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/15 15:34:29 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,29 @@ int 	main(int ac, char **av)
 		usage(av[0]);
 	port = ft_atoi(av[1]);
 	sock = create_server(port);
-	cs = accept(sock, (struct sockaddr *)&csin, &cslen);
-	while ((r = read(cs, buf, 1023)) > 0)
+	while (42)
 	{
-		buf[r] = '\0';
-		ft_putstr("message reçut : ");
-		ft_putendl(buf);
+		cs = accept(sock, (struct sockaddr *)&csin, &cslen);
+		if (fork() == 0)
+		{
+			ft_putstr("le client ");
+			ft_putnbr(cs);
+			ft_putendl(" s'est connecté");
+			while ((r = read(cs, buf, 1023)) > 0)
+			{
+				buf[r] = '\0';
+				ft_putstr("message reçu [");
+				ft_putnbr(cs);
+				ft_putstr("] : ");
+				ft_putendl(buf);
+				send(cs, "message", 8, MSG_OOB);
+			}
+			ft_putstr("le client ");
+			ft_putnbr(cs);
+			ft_putendl(" s'est déconnecté");
+			close(cs);
+			return (0);
+		}
 	}
 	close(cs);
 	close(sock);

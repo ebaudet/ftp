@@ -6,7 +6,7 @@
 #    By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/05/14 12:35:00 by ebaudet           #+#    #+#              #
-#    Updated: 2014/05/14 13:22:24 by ebaudet          ###   ########.fr        #
+#    Updated: 2014/05/15 15:37:28 by ebaudet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ clean:
 	rm -rf .obj
 
 fclean: clean
-	rm -f $(OTOOL) $(NM)
+	rm -f $(SERVEUR) $(CLIENT)
 
 re: fclean all
 

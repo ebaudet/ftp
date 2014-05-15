@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:09 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/14 20:33:30 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/15 15:11:03 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,20 +51,27 @@ int 	main(int ac, char **av)
 {
 	int						port;
 	int						sock;
-	/*int						r;
-	char					buf[1024];*/
+	int						s;
+	char					buf[1024];
+	int						r;
 
 	if (ac != 3)
 		usage(av[0]);
 	port = ft_atoi(av[2]);
 	sock = create_client(av[1], port);
-	/*while ((r = read(cs, buf, 1023)) > 0)
+	while (42)
 	{
+		ft_putstr("[client]-> ");
+		s = read(0, buf, 1023);
+		buf[s - 1] = '\0';
+		if (s == 5 && !ft_strcmp(buf, "exit"))
+			break ;
+		write(sock, buf, s);
+		r = read(sock, buf, 1023);
 		buf[r] = '\0';
-		ft_putstr("message reçut : ");
-		ft_putendl(buf);
-	}*/
-	write(sock, "bonjour\n", 8);
+		write(1, buf, r);
+		write(1, "\n", 1);
+	}
 	close(sock);
 	return (0);
 }
