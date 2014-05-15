@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:09 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/15 15:11:03 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/15 20:38:35 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int 	main(int ac, char **av)
 		ft_putstr("[client]-> ");
 		s = read(0, buf, 1023);
 		buf[s - 1] = '\0';
-		if (s == 5 && !ft_strcmp(buf, "exit"))
+		if (s == 5 && !ft_strcmp(buf, "quit"))
 			break ;
 		write(sock, buf, s);
 		r = read(sock, buf, 1023);

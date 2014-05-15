@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:03 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/15 15:34:29 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/15 20:32:42 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,41 @@ int		create_server(int port)
 	return (sock);
 }
 
-int 	main(int ac, char **av)
+void		exectute_commande(int r, char *buf, int cs)
+{
+	char		*arg;
+
+	if (!ft_strcmp("ls", buf))
+		send(cs, "commande ls", ft_strlen("commande ls") + 1, MSG_OOB);
+	else if (r > 4 && !ft_strncmp("cd ", buf, 3))
+	{
+		send(cs, "commande cd, arg = ", ft_strlen("commande cd, arg = ") + 1, MSG_OOB);
+		arg = ft_strdup(buf + 3);
+		send(cs, arg, ft_strlen(arg), MSG_OOB);
+	}
+	else if (!ft_strcmp("pwd", buf))
+	{
+		send(cs, "commande pwd", ft_strlen("commande pwd") + 1, MSG_OOB);
+	}
+	else if (r > 5 && !ft_strncmp("get ", buf, 4))
+	{
+		send(cs, "commande get, arg = ", ft_strlen("commande get, arg = ") + 1, MSG_OOB);
+		arg = ft_strdup(buf + 4);
+		send(cs, arg, ft_strlen(arg), MSG_OOB);
+	}
+	else if (r > 5 && !ft_strncmp("put ", buf, 4))
+	{
+		send(cs, "commande put, arg = ", ft_strlen("commande put, arg = ") + 1, MSG_OOB);
+		arg = ft_strdup(buf + 4);
+		send(cs, arg, ft_strlen(arg), MSG_OOB);
+	}
+	else
+	{
+		send(cs, "bad command", 12, MSG_OOB);
+	}
+}
+
+int		main(int ac, char **av)
 {
 	int						port;
 	int						sock;
@@ -72,12 +106,12 @@ int 	main(int ac, char **av)
 			ft_putendl(" s'est connecté");
 			while ((r = read(cs, buf, 1023)) > 0)
 			{
-				buf[r] = '\0';
+				buf[r - 1] = '\0';
 				ft_putstr("message reçu [");
 				ft_putnbr(cs);
 				ft_putstr("] : ");
 				ft_putendl(buf);
-				send(cs, "message", 8, MSG_OOB);
+				exectute_commande(r, buf, cs);
 			}
 			ft_putstr("le client ");
 			ft_putnbr(cs);
