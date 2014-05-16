@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:09 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/15 20:38:35 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/16 21:18:13 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "libft.h"
+#include "header.h"
 
 void	usage(char *str)
 {
@@ -67,9 +68,17 @@ int 	main(int ac, char **av)
 		if (s == 5 && !ft_strcmp(buf, "quit"))
 			break ;
 		write(sock, buf, s);
+		while ((r = recv(sock, buf, sizeof(buf), 0)) > 0)
+		{
+			buf[r] = '\0';
+			if (ft_strcmp(buf, END) == 0 || (ft_strcmp(buf, "") == 0))
+				break ;
+			write(1, buf, r);
+		}
+		/*
 		r = read(sock, buf, 1023);
 		buf[r] = '\0';
-		write(1, buf, r);
+		*/
 		write(1, "\n", 1);
 	}
 	close(sock);

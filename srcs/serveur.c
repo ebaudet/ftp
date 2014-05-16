@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:03 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/15 20:32:42 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/16 22:11:29 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "libft.h"
+#include "header.h"
+#include "serveur.h"
 
 void	usage(char *str)
 {
@@ -24,6 +26,25 @@ void	usage(char *str)
 	ft_putstr(str);
 	ft_putstr(" <port>\n");
 	exit(-1);
+}
+
+char	*eb_getenv(char **env, char *name)
+{
+	int		i;
+	char	loop;
+
+	i = 0;
+	loop = 'y';
+	while (*(env + i) != NULL && loop == 'y')
+	{
+		if (ft_strncmp(*(env + i), name, ft_strlen(name)) == 0)
+			loop = 'n';
+		else
+			i++;
+	}
+	if (loop == 'y')
+		return (NULL);
+	return (*(env + i) + ft_strlen(name) + 1);
 }
 
 int		create_server(int port)
@@ -48,41 +69,24 @@ int		create_server(int port)
 	return (sock);
 }
 
-void		exectute_commande(int r, char *buf, int cs)
+void		execute_commande(int r, char *buf, int cs, char **env)
 {
-	char		*arg;
-
-	if (!ft_strcmp("ls", buf))
-		send(cs, "commande ls", ft_strlen("commande ls") + 1, MSG_OOB);
+	if (!ft_strcmp("ls", buf) || (r > 4 && !ft_strncmp("ls ", buf, 3)))
+		execute_ls(r, buf, cs);
 	else if (r > 4 && !ft_strncmp("cd ", buf, 3))
-	{
-		send(cs, "commande cd, arg = ", ft_strlen("commande cd, arg = ") + 1, MSG_OOB);
-		arg = ft_strdup(buf + 3);
-		send(cs, arg, ft_strlen(arg), MSG_OOB);
-	}
+		execute_cd(buf, cs);
 	else if (!ft_strcmp("pwd", buf))
-	{
-		send(cs, "commande pwd", ft_strlen("commande pwd") + 1, MSG_OOB);
-	}
+		execute_pwd(cs, eb_getenv(env, "PWD"));
 	else if (r > 5 && !ft_strncmp("get ", buf, 4))
-	{
-		send(cs, "commande get, arg = ", ft_strlen("commande get, arg = ") + 1, MSG_OOB);
-		arg = ft_strdup(buf + 4);
-		send(cs, arg, ft_strlen(arg), MSG_OOB);
-	}
+		execute_get(buf, cs);
 	else if (r > 5 && !ft_strncmp("put ", buf, 4))
-	{
-		send(cs, "commande put, arg = ", ft_strlen("commande put, arg = ") + 1, MSG_OOB);
-		arg = ft_strdup(buf + 4);
-		send(cs, arg, ft_strlen(arg), MSG_OOB);
-	}
+		execute_put(buf, cs);
 	else
-	{
 		send(cs, "bad command", 12, MSG_OOB);
-	}
+	send(cs, END, 2, 0);
 }
 
-int		main(int ac, char **av)
+int		main(int ac, char **av, char **env)
 {
 	int						port;
 	int						sock;
@@ -111,7 +115,7 @@ int		main(int ac, char **av)
 				ft_putnbr(cs);
 				ft_putstr("] : ");
 				ft_putendl(buf);
-				exectute_commande(r, buf, cs);
+				execute_commande(r, buf, cs, env);
 			}
 			ft_putstr("le client ");
 			ft_putnbr(cs);

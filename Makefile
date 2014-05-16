@@ -6,14 +6,14 @@
 #    By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/05/14 12:35:00 by ebaudet           #+#    #+#              #
-#    Updated: 2014/05/15 15:37:28 by ebaudet          ###   ########.fr        #
+#    Updated: 2014/05/16 21:21:23 by ebaudet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= ftp
 
 SERVEUR	= serveur
-F_SRV	= serveur.c
+F_SRV	= serveur.c execute.c
 SRC_SRV	= $(addprefix srcs/, $(F_SRV))
 OBJ_SRV	= $(SRC_SRV:srcs/%.c=.obj/%.o)
 
