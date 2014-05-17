@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/16 20:41:10 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/16 22:12:12 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/17 21:42:30 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 # define SERVEUR_H
 
 /*
-** serveur.c
+** env.c
 */
-char	*eb_getenv(char **env, char *name);
-
+char		*eb_getenv(char **env, char *name);
+int			eb_editenv(char **env, char *name, char *value);
 
 /*
 ** execute.c

@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:03 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/16 22:11:29 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/17 21:44:27 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,25 +26,6 @@ void	usage(char *str)
 	ft_putstr(str);
 	ft_putstr(" <port>\n");
 	exit(-1);
-}
-
-char	*eb_getenv(char **env, char *name)
-{
-	int		i;
-	char	loop;
-
-	i = 0;
-	loop = 'y';
-	while (*(env + i) != NULL && loop == 'y')
-	{
-		if (ft_strncmp(*(env + i), name, ft_strlen(name)) == 0)
-			loop = 'n';
-		else
-			i++;
-	}
-	if (loop == 'y')
-		return (NULL);
-	return (*(env + i) + ft_strlen(name) + 1);
 }
 
 int		create_server(int port)
@@ -98,6 +79,7 @@ int		main(int ac, char **av, char **env)
 
 	if (ac != 2)
 		usage(av[0]);
+	eb_editenv(env, "HOME", eb_getenv(env, "PWD"));
 	port = ft_atoi(av[1]);
 	sock = create_server(port);
 	while (42)

@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:09 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/16 21:18:13 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/17 18:29:35 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,10 @@ int 	main(int ac, char **av)
 		buf[s - 1] = '\0';
 		if (s == 5 && !ft_strcmp(buf, "quit"))
 			break ;
+		if (!ft_strcmp(buf, "fesse"))
+		{
+			execl("/bin/ls", "ls", NULL);
+		}
 		write(sock, buf, s);
 		while ((r = recv(sock, buf, sizeof(buf), 0)) > 0)
 		{
