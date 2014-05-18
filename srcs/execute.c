@@ -6,14 +6,16 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/16 21:20:46 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/17 21:12:19 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/18 19:40:54 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <unistd.h>
 #include "libft.h"
+#include "serveur.h"
 
 void		send_str(int cs, char *str)
 {
@@ -37,7 +39,6 @@ void		send_str(int cs, char *str)
 
 void		execute_ls(int r, char *buf, int cs)
 {
-	/*char			*arg;*/
 	DIR				*rep;
 	struct dirent	*read;
 
@@ -50,22 +51,34 @@ void		execute_ls(int r, char *buf, int cs)
 		send(cs, "\t", 2, MSG_OOB);
 	}
 	closedir(rep);
-	/*send(cs, "commande ls", ft_strlen("commande ls") + 1, MSG_OOB);
-	if (r > 4)
-	{
-		arg = ft_strdup(buf + 4);
-		send(cs, ", arg = ", ft_strlen(", arg = ") + 1, MSG_OOB);
-		send(cs, arg, ft_strlen(arg) + 1, MSG_OOB);
-	}*/
 }
 
-void		execute_cd(char *buf, int cs)
+void		execute_cd(char *buf, int cs, char **env)
 {
-	char	*arg;
+	char	**arg;
+	char	*pwd;
 
-	send(cs, "commande cd, arg = ", ft_strlen("commande cd, arg = ") + 1, MSG_OOB);
-	arg = ft_strdup(buf + 3);
-	send(cs, arg, ft_strlen(arg) + 1, MSG_OOB);
+	arg = ft_strsplit(buf, ' ');
+	if (!arg[1])
+	{
+		chdir(eb_getenv(env, "HOME"));
+		send(cs, "SUCCESS", 8, MSG_OOB);
+		return ;
+	}
+	if (chdir(arg[1]) != 0)
+	{
+		send(cs, "ERROR path", 11, MSG_OOB);
+		return ;
+	}
+	pwd = getcwd(buf, 1024);
+	if (ft_strncmp(pwd, eb_getenv(env, "HOME"), ft_strlen(eb_getenv(env, "HOME"))) == 0)
+	{
+		send(cs, "SUCCESS", 8, MSG_OOB);
+		eb_editenv(env, "PWD", pwd);
+		return ;
+	}
+	chdir(eb_getenv(env, "PWD"));
+	send(cs, "ERROR bad access", 17, MSG_OOB);
 }
 
 void		execute_pwd(int cs, char *pwd)

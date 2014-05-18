@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:03 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/17 21:44:27 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/18 19:39:20 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,13 @@ int		create_server(int port)
 
 void		execute_commande(int r, char *buf, int cs, char **env)
 {
+	char	**args;
+
+	args = ft_strsplit(buf, ' ');
 	if (!ft_strcmp("ls", buf) || (r > 4 && !ft_strncmp("ls ", buf, 3)))
 		execute_ls(r, buf, cs);
-	else if (r > 4 && !ft_strncmp("cd ", buf, 3))
-		execute_cd(buf, cs);
+	else if (!ft_strcmp("cd", args[0]))
+		execute_cd(buf, cs, env);
 	else if (!ft_strcmp("pwd", buf))
 		execute_pwd(cs, eb_getenv(env, "PWD"));
 	else if (r > 5 && !ft_strncmp("get ", buf, 4))
@@ -79,7 +82,7 @@ int		main(int ac, char **av, char **env)
 
 	if (ac != 2)
 		usage(av[0]);
-	eb_editenv(env, "HOME", eb_getenv(env, "PWD"));
+	eb_editenv(env, "HOME", getcwd(buf, 1024));
 	port = ft_atoi(av[1]);
 	sock = create_server(port);
 	while (42)
