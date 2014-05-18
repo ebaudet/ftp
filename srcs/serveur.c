@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:03 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/18 22:37:16 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/18 23:35:22 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,9 @@ void		execute_commande(int r, char *buf, int cs, char **env)
 	else if (!ft_strcmp("pwd", args[0]))
 		execute_pwd(cs, eb_getenv(env, "PWD"));
 	else if (!ft_strcmp("get", args[0]))
-		execute_get(args, cs, env);
+		execute_get(args, cs);
 	else if (!ft_strcmp("put", args[0]))
-		execute_put(args, cs, env);
+		execute_put(args, cs);
 	else
 		send(cs, "ERROR bad command", 12, MSG_OOB);
 	send(cs, END, 2, 0);

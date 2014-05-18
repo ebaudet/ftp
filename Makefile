@@ -6,7 +6,7 @@
 #    By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/05/14 12:35:00 by ebaudet           #+#    #+#              #
-#    Updated: 2014/05/17 21:38:12 by ebaudet          ###   ########.fr        #
+#    Updated: 2014/05/18 23:27:30 by ebaudet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ SRC_SRV	= $(addprefix srcs/, $(F_SRV))
 OBJ_SRV	= $(SRC_SRV:srcs/%.c=.obj/%.o)
 
 CLIENT	= client
-F_CLT	= client.c
+F_CLT	= client.c client_get.c
 SRC_CLT	= $(addprefix srcs/, $(F_CLT))
 OBJ_CLT	= $(SRC_CLT:srcs/%.c=.obj/%.o)
 

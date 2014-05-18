@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/16 21:20:46 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/18 23:14:26 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/18 23:34:45 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,6 @@
 #include <fcntl.h>
 #include "libft.h"
 #include "serveur.h"
-
-void		send_str(int cs, char *str)
-{
-	int		i;
-	char	c;
-	size_t	len;
-
-	i = 0;
-	while ((len = ft_strlen(str + i)) > 0)
-	{
-		if (len > 1024)
-		{
-			c = str[(i + 1) * 1024];
-			str[(i + 1) * 1024] = 0;
-		}
-		send(cs, str + i, 1024, MSG_OOB);
-		str[(i + 1) * 1024] = c;
-		i += 1024;
-	}
-}
 
 void		execute_ls(int r, char *buf, int cs)
 {
@@ -88,13 +68,12 @@ void		execute_pwd(int cs, char *pwd)
 	send(cs, pwd, ft_strlen(pwd) + 1, MSG_OOB);
 }
 
-void		execute_get(char **args, int cs, char **env)
+void		execute_get(char **args, int cs)
 {
 	int		fd;
 	char	buf[1];
 	int		r;
 
-	(void)env;
 	if (!args[1])
 	{
 		send(cs, "ERROR no file", 14, MSG_OOB);
@@ -116,9 +95,8 @@ void		execute_get(char **args, int cs, char **env)
 	close(fd);
 }
 
-void		execute_put(char **args, int cs, char **env)
+void		execute_put(char **args, int cs)
 {
-	(void)env;
 	send(cs, "commande put, arg = ", ft_strlen("commande put, arg = ") + 1,
 		MSG_OOB);
 	send(cs, args[1], ft_strlen(args[1]) + 1, MSG_OOB);
