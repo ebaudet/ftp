@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:03 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/18 23:35:22 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/18 23:39:49 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int		create_server(int port)
 	return (sock);
 }
 
-void		execute_commande(int r, char *buf, int cs, char **env)
+void	execute_commande(int r, char *buf, int cs, char **env)
 {
 	char	**args;
 
