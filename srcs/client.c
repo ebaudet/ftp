@@ -6,7 +6,7 @@
 /*   By: ebaudet <ebaudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/14 13:23:09 by ebaudet           #+#    #+#             */
-/*   Updated: 2014/05/17 18:29:35 by ebaudet          ###   ########.fr       */
+/*   Updated: 2014/05/18 23:20:04 by ebaudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include "libft.h"
 #include "header.h"
 
@@ -48,42 +50,80 @@ int		create_client(char *addr, int port)
 	return (sock);
 }
 
-int 	main(int ac, char **av)
+int		action_get(int sock, char **args)
 {
-	int						port;
-	int						sock;
-	int						s;
-	char					buf[1024];
-	int						r;
+	char			buf[1024];
+	int				r;
+	int				fd;
 
+	if ((r = recv(sock, buf, sizeof(buf), 0)) > 0)
+	{
+		if (!ft_strncmp(buf, "FILE_OK", 7))
+		{
+			if ((fd = open(args[1], O_RDWR | O_CREAT | O_APPEND | O_EXCL, S_IRUSR | S_IWUSR)) == -1)
+			{
+				write(sock, "ERROR", 2);
+				ft_putendl("ERROR File already existing");
+				return (-1);
+			}
+			write(sock, "OK", 2);
+			while ((r = recv(sock, buf, sizeof(buf), 0)) > 0)
+			{
+				buf[r] = '\0';
+				write(fd, buf, r);
+				if (ft_strcmp(buf, END) == 0 || (ft_strcmp(buf, "") == 0))
+					break ;
+			}
+			close(fd);
+			ft_putendl("SUCCESS reception");
+			return (0);
+		}
+		write(1, buf, r);
+		write(1, "\n", 1);
+	}
+	return (-2);
+}
+
+int		client_loop(int sock)
+{
+	int				s;
+	char			buf[1024];
+	int				r;
+	char			**args;
+
+	ft_putstr("[client]-> ");
+	s = read(0, buf, 1023);
+	buf[s - 1] = '\0';
+	args = ft_strsplit(buf, ' ');
+	if (!ft_strcmp(args[0], "quit"))
+		return (1);
+	write(sock, buf, s);
+	if (!ft_strcmp(args[0], "get"))
+		return (action_get(sock, args));
+	while ((r = recv(sock, buf, sizeof(buf), 0)) > 0)
+	{
+		buf[r] = '\0';
+		if (ft_strcmp(buf, END) == 0 || (ft_strcmp(buf, "") == 0))
+			break ;
+		write(1, buf, r);
+	}
+	write(1, "\n", 1);
+	return (0);
+}
+
+int		main(int ac, char **av)
+{
+	int			port;
+	int			sock;
+	
 	if (ac != 3)
 		usage(av[0]);
 	port = ft_atoi(av[2]);
 	sock = create_client(av[1], port);
 	while (42)
 	{
-		ft_putstr("[client]-> ");
-		s = read(0, buf, 1023);
-		buf[s - 1] = '\0';
-		if (s == 5 && !ft_strcmp(buf, "quit"))
+		if (client_loop(sock) == 1)
 			break ;
-		if (!ft_strcmp(buf, "fesse"))
-		{
-			execl("/bin/ls", "ls", NULL);
-		}
-		write(sock, buf, s);
-		while ((r = recv(sock, buf, sizeof(buf), 0)) > 0)
-		{
-			buf[r] = '\0';
-			if (ft_strcmp(buf, END) == 0 || (ft_strcmp(buf, "") == 0))
-				break ;
-			write(1, buf, r);
-		}
-		/*
-		r = read(sock, buf, 1023);
-		buf[r] = '\0';
-		*/
-		write(1, "\n", 1);
 	}
 	close(sock);
 	return (0);
